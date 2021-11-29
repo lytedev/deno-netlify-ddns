@@ -103,6 +103,11 @@ service over both IPv4 and IPv6:
     curl -4 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
     curl -6 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
 
+# Personal Notes
+
+- I prefer to give each machine its own unique user
+- Each machine has a known set of DNS entries to it on my primary domain
+
 # To Do
 
 - Hashed passwords could be handy?
