@@ -109,3 +109,4 @@ service over both IPv4 and IPv6:
   - This way if your envs (or logs?) leak your passwords aren't hosed
     - But seriously, just use globally unique passwords for each user here
 - Endpoints and/or UI for persistent modification, importing, and exporting of the Users and Mappings by admins
+  - This way you don't have to copy/paste the envvars from the little textbox in Deno Deploy
