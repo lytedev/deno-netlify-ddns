@@ -25,9 +25,9 @@ certainly do not want to do that.
 Start the server like so:
 
     DEFAULT_NETLIFY_API_TOKEN='your_token_here' \
-    		NETLIFY_DDNS_USERS_JSON='your_users_json' \
-    		NETLIFY_DDNS_MAPPINGS='your_mappings_json' \
-    		deno run --allow-env --allow-net ./main.ts
+        NETLIFY_DDNS_USERS_JSON='your_users_json' \
+        NETLIFY_DDNS_MAPPINGS='your_mappings_json' \
+        deno run --allow-env --allow-net ./main.ts
 
 Or in Deno Deploy:
 
@@ -44,43 +44,43 @@ one out on your own!
 Your `NETLIFY_DDNS_USERS_JSON` should contain a JSON string with the following structure:
 
     {
-    	"username": "password",
-    	"daniel_flanagan_home": ["password_1", "password_2"]
+      "username": "password",
+      "daniel_flanagan_home": ["password_1", "password_2"]
     }
 
 And your `NETLIFY_DDNS_MAPPINGS` should contain a JSON string with the following structure:
 
     {
-    	"username": {
-    		"domains": {
-    			"example.com": {
-    				"subdomains": [
-    					{ "name": "@" },
-    					{ "name": "subdomain" }
-    				]
-    			},
-    			"example.org": {
-    				"subdomains": [
-    					{ "name": "another-subdomain"
-    				]
-    			}
-    		}
-    	},
-    		"daniel_flanagan_home": {
-    		"domains": {
-    			"example.com": {
-    				"subdomains": [
-    					{ "name": "cat-pictures" },
-    					{ "name": "enterprise" }
-    				]
-    			},
-    			"lyte.dev": {
-    				"subdomains": [
-    					{ "name": "home" }
-    				]
-    			}
-    		}
-    		}
+      "username": {
+        "domains": {
+          "example.com": {
+            "subdomains": [
+              { "name": "@" },
+              { "name": "subdomain" }
+            ]
+          },
+          "example.org": {
+            "subdomains": [
+              { "name": "another-subdomain"
+            ]
+          }
+        }
+      },
+        "daniel_flanagan_home": {
+        "domains": {
+          "example.com": {
+            "subdomains": [
+              { "name": "cat-pictures" },
+              { "name": "enterprise" }
+            ]
+          },
+          "lyte.dev": {
+            "subdomains": [
+              { "name": "home" }
+            ]
+          }
+        }
+        }
     }
 
 This would configure the server such that a request with HTTP Basic auth credentials like `daniel_flanagan_home:password_1`
