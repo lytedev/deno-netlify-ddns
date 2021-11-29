@@ -26,7 +26,7 @@ Start the server like so:
 
     DEFAULT_NETLIFY_API_TOKEN='your_token_here' \
         NETLIFY_DDNS_USERS_JSON='your_users_json' \
-        NETLIFY_DDNS_MAPPINGS='your_mappings_json' \
+        NETLIFY_DDNS_MAPPINGS_JSON='your_mappings_json' \
         deno run --allow-env --allow-net ./main.ts
 
 Or in Deno Deploy:
@@ -50,7 +50,7 @@ Your `NETLIFY_DDNS_USERS_JSON` should contain a JSON string with the following s
 
 **NOTE**: These passwords are not stored securely at all. Use globally unique passwords. You can generate some with `openssl rand -hex 32`.
 
-And your `NETLIFY_DDNS_MAPPINGS` should contain a JSON string with the following structure:
+And your `NETLIFY_DDNS_MAPPINGS_JSON` should contain a JSON string with the following structure:
 
     {
       "username": {

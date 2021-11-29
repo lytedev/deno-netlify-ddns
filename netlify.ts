@@ -146,7 +146,7 @@ const netlifyDdnsUsers: { [username: string]: string[] | string } = JSON.parse(
 const netlifyDdnsMapping: { [username: string]: NetlifyDDNSMapping } = JSON
   .parse(
     await queryEnv(
-      "NETLIFY_DDNS_MAPPINGS",
+      "NETLIFY_DDNS_MAPPINGS_JSON",
       JSON.stringify({
         "tester-guy": {
           domains: {
