@@ -48,6 +48,8 @@ Your `NETLIFY_DDNS_USERS_JSON` should contain a JSON string with the following s
       "daniel_flanagan_home": ["password_1", "password_2"]
     }
 
+**NOTE**: These passwords are not stored securely at all. Use globally unique passwords. You can generate some with `openssl rand -hex 32`.
+
 And your `NETLIFY_DDNS_MAPPINGS` should contain a JSON string with the following structure:
 
     {
@@ -66,7 +68,7 @@ And your `NETLIFY_DDNS_MAPPINGS` should contain a JSON string with the following
           }
         }
       },
-        "daniel_flanagan_home": {
+      "daniel_flanagan_home": {
         "domains": {
           "example.com": {
             "subdomains": [
@@ -80,7 +82,7 @@ And your `NETLIFY_DDNS_MAPPINGS` should contain a JSON string with the following
             ]
           }
         }
-        }
+      }
     }
 
 This would configure the server such that a request with HTTP Basic auth credentials like `daniel_flanagan_home:password_1`
@@ -100,3 +102,10 @@ service over both IPv4 and IPv6:
 
     curl -4 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
     curl -6 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+
+# To Do
+
+- Hashed passwords could be handy?
+  - This way if your envs (or logs?) leak your passwords aren't hosed
+    - But seriously, just use globally unique passwords for each user here
+- Endpoints and/or UI for persistent modification, importing, and exporting of the Users and Mappings by admins

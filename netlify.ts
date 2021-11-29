@@ -143,19 +143,25 @@ const netlifyDdnsUsers: { [username: string]: string[] | string } = JSON.parse(
   ),
 );
 
-const netlifyDdnsMapping: { [username: string]: NetlifyDDNSMapping } = {
-  "tester-guy": {
-    domains: {
-      "lyte.dev": {
-        subdomains: [
-          {
-            name: "testing-netlify-ddns.testing-area.h",
+const netlifyDdnsMapping: { [username: string]: NetlifyDDNSMapping } = JSON
+  .parse(
+    await queryEnv(
+      "NETLIFY_DDNS_MAPPINGS",
+      JSON.stringify({
+        "tester-guy": {
+          domains: {
+            "lyte.dev": {
+              subdomains: [
+                {
+                  name: "testing-netlify-ddns.testing-area.h",
+                },
+              ],
+            },
           },
-        ],
-      },
-    },
-  },
-};
+        },
+      }),
+    ),
+  );
 
 const checkBasicAuth = (request: Request) => {
   const auth = request.headers.get("authorization");
