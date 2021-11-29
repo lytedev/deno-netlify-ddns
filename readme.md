@@ -89,13 +89,13 @@ This would configure the server such that a request with HTTP Basic auth credent
 
 Clients can now `POST` to
 `/v1/netlify-ddns/replace-all-relevant-user-dns-records` with the previously
-setup credentials and this service will setup all mapped A (or AAAA if
-requested over IPv6) DNS records in Netlify and remove any conflicting A (or
-AAAA) records.
+setup credentials and this service will setup all mapped `A` (or `AAAA` if
+requested over IPv6) DNS records in Netlify and remove any conflicting `A` (or
+`AAAA`) records.
 
     curl -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
 
-This means that if you want IPv4 _and_ IPv6 records, you will need to hit the
+This means that if you want IPv4 (`A`) _and_ IPv6 (`AAAA`) records, you will need to hit the
 service over both IPv4 and IPv6:
 
     curl -4 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
