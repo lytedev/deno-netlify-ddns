@@ -7,7 +7,11 @@ await server(async (request: Request, conn: Deno.Conn) => {
   const { pathname } = new URL(request.url);
   console.log(pathname);
   try {
-    if (pathname.startsWith("/v1/netlify-ddns/replace-all-dns-records")) {
+    if (
+      pathname.startsWith(
+        "/v1/netlify-ddns/replace-all-relevant-user-dns-records",
+      )
+    ) {
       return await handleDdnsRequest(request, conn);
     }
     return new HttpError("Not Found", "not_found", 404).toResponse();

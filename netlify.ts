@@ -134,9 +134,14 @@ interface NetlifyDNSRecord {
   value: string;
 }
 
-const netlifyDdnsUsers: { [username: string]: string[] | string } = {
-  "tester-guy": "password",
-};
+const netlifyDdnsUsers: { [username: string]: string[] | string } = JSON.parse(
+  await queryEnv(
+    "NETLIFY_DDNS_USERS_JSON",
+    JSON.stringify({
+      "tester-guy": "password",
+    }),
+  ),
+);
 
 const netlifyDdnsMapping: { [username: string]: NetlifyDDNSMapping } = {
   "tester-guy": {
@@ -215,13 +220,14 @@ export const handleDdnsRequest = async (
 ): Promise<Response> => {
   const remote = conn.remoteAddr as Deno.NetAddr;
   const remoteHost = remote.hostname;
-  const isIPv6 = remoteHost.includes(":");
-  console.log(remote, remoteHost, isIPv6);
 
   // TODO: I'm aware that this certainly does not properly parse/identify all
   // the different ways that an IP address can be specified. However, this
   // worked in my basic tests since it seems that Deno's API only provides the
   // IP addresses in their well-known, canonical forms.
+  const isIPv6 = remoteHost.includes(":");
+
+  console.log(remote, remoteHost, isIPv6);
 
   if (request.method !== "POST") {
     throw new HttpError(
