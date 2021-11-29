@@ -2,11 +2,13 @@ export const queryEnv = async (
   envKey: string,
   defaultValue: string,
 ): Promise<string> => {
-  const { state } = await Deno.permissions.query({
-    name: "env",
-    variable: envKey,
-  });
-  if (state !== "granted") return defaultValue;
+  if (Deno.permissions) {
+    const { state } = await Deno.permissions.query({
+      name: "env",
+      variable: envKey,
+    });
+    if (state !== "granted") return defaultValue;
+  }
   return Deno.env.get(envKey) || defaultValue;
 };
 
@@ -14,14 +16,16 @@ export class EnvError extends Error {
 }
 
 export const requireEnv = async (envKey: string): Promise<string> => {
-  const { state } = await Deno.permissions.query({
-    name: "env",
-    variable: envKey,
-  });
-  if (state !== "granted") {
-    throw new EnvError(
-      `Did not have permission to read environment variable ${envKey}`,
-    );
+  if (Deno.permissions) {
+    const { state } = await Deno.permissions.query({
+      name: "env",
+      variable: envKey,
+    });
+    if (state !== "granted") {
+      throw new EnvError(
+        `Did not have permission to read environment variable ${envKey}`,
+      );
+    }
   }
   const result = Deno.env.get(envKey);
   if (result === undefined) {
