@@ -85,7 +85,9 @@ And your `NETLIFY_DDNS_MAPPINGS_JSON` should contain a JSON string with the foll
       }
     }
 
-This would configure the server such that a request with HTTP Basic auth credentials like `daniel_flanagan_home:password_1`
+This would configure the server such that a request with HTTP Basic auth
+credentials like `daniel_flanagan_home:password_1` would setup A or AAAA DNS
+entries for the mapped subdomains using the address of the client.
 
 # Client Usage
 
