@@ -103,6 +103,10 @@ service over both IPv4 and IPv6:
     curl -4 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
     curl -6 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
 
+And if you want this in a systemd timer that's pretty simple to use, I've got a pre-configured client for you here:
+
+- https://github.com/lytedev/deno-netlify-ddns-client
+
 # Personal Notes
 
 - I prefer to give each machine its own unique user
