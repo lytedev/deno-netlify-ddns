@@ -1,0 +1,10 @@
+[Unit]
+Description=netlify-ddns-client
+After=network-online.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/netlify-ddns-client.sh
+
+[Install]
+WantedBy=multi-user.target
