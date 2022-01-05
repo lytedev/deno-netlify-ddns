@@ -19,8 +19,8 @@ mapped to the provided credentials.
 # Usage
 
 **NOTE**: Running this locally while configured for production will delete and
-create production DNS entries pointed to `127.0.0.1` or `::1`. You almost
-certainly do not want to do that.
+create DNS entries pointed to `127.0.0.1` or `::1`. You almost certainly do not
+want to do that.
 
 Start the server like so:
 
@@ -119,5 +119,9 @@ And if you want this in a systemd timer that's pretty simple to use, I've got a 
 - Hashed passwords could be handy?
   - This way if your envs (or logs?) leak your passwords aren't hosed
     - But seriously, just use globally unique passwords for each user here
+      - But also these should definitely be hashed
 - Endpoints and/or UI for persistent modification, importing, and exporting of the Users and Mappings by admins
   - This way you don't have to copy/paste the envvars from the little textbox in Deno Deploy
+    - How/where to persist that makes sense?
+      - Ideally, Deno Deploy gave me a bucket to put secret files in
+        - Might be possible to have it post the envvars to Deno Deploy?

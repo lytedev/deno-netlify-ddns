@@ -1,0 +1,10 @@
+"dragon.h": domains: "lyte.dev": subdomains: [{name: "dragon.h"}]
+"router.h": domains: "lyte.dev": subdomains: [{name: "router.h"}]
+"ruby.remote": domains: "lyte.dev": subdomains: [{name: "ruby.remote"}]
+"rift.remote": domains: "lyte.dev": subdomains: [{name: "rift.remote"}]
+
+"faceless.h": domains: "lyte.dev": subdomains: [
+	{name: "faceless.h"},
+	{name: "git"},
+	{name: "chat"},
+]
