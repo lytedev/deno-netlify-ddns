@@ -282,7 +282,9 @@ export const handleDdnsRequest = async (
         domainMappings.subdomains.forEach((subdomain) => {
           recordsToAdd.push({
             type: aType,
-            hostname: `${subdomain.name}.${domain}`,
+            hostname: subdomain.name == "@"
+              ? domain
+              : `${subdomain.name}.${domain}`,
             ttlSeconds: subdomain.ttlSeconds || DEFAULT_TTL,
             value: remoteHost,
           });
@@ -302,6 +304,7 @@ export const handleDdnsRequest = async (
             0,
             hostname.length - domain.length - 1,
           ) || "@";
+          // console.debug("SUBDOMAIN:", subdomain);
           // handle subdomain
           // check if subdomain is even relevant, otherwise do nothing
           const relatedMapping = recordsToAdd.find((
@@ -332,7 +335,7 @@ export const handleDdnsRequest = async (
           }
         });
         const added = await Promise.all(recordsToAdd.map(async (record) => {
-          console.log("Requesting creation of record", record);
+          console.log("Requesting creation of record", record, domain);
           const response = await createDnsRecord(domain, record, {
             netlifyApiToken,
           });
