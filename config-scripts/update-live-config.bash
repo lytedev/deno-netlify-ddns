@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "THIS SCRIPT IS OUT OF DATE!"
+exit 1
+
 [ -z "$DENO_DEPLOY_PROJECT_ID" ] && { echo "DENO_DEPLOY_PROJECT_ID not set"; exit 1; }
 DENO_DEPLOY_API_TOKEN="$(pass 'deno-deploy-token' | head -n 1)"
 

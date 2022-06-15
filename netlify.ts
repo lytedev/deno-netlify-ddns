@@ -214,8 +214,7 @@ const checkBasicAuth = (request: Request) => {
   if (!doesUserExist || !isPasswordValid) {
     if (!doesUserExist) {
       console.error(`User not found: ${username}`)
-    }
-    if (!isPasswordValid) {
+    } else if (!isPasswordValid) {
       console.error(`Invalid password for user: ${username}`)
     } 
     throw new HttpError(
