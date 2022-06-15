@@ -204,17 +204,20 @@ const checkBasicAuth = (request: Request) => {
     );
   }
 
+  // console.debug(`login attempt: ${username} ${password} ${netlifyDdnsUsers[username]}`)
+
   const doesUserExist = username in netlifyDdnsUsers;
   const passwordOptions = netlifyDdnsUsers[username];
   const isPasswordValid = Array.isArray(passwordOptions)
     ? passwordOptions.includes(password)
-    : passwordOptions === password;
+    : passwordOptions == password;
   if (!doesUserExist || !isPasswordValid) {
-    if (!isPasswordValid) {
-      console.error(`Invalid password for user: ${username}`)
-    } else if (!doesUserExist) {
+    if (!doesUserExist) {
       console.error(`User not found: ${username}`)
     }
+    if (!isPasswordValid) {
+      console.error(`Invalid password for user: ${username}`)
+    } 
     throw new HttpError(
       "User does not exist or password incorrect",
       "failed_to_authenticate",
