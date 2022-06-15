@@ -210,7 +210,11 @@ const checkBasicAuth = (request: Request) => {
     ? passwordOptions.includes(password)
     : passwordOptions === password;
   if (!doesUserExist || !isPasswordValid) {
-    console.error(`Invalid auth credentials for user: ${username}`)
+    if (!isPasswordValid) {
+      console.error(`Invalid password for user: ${username}`)
+    } else if (!doesUserExist) {
+      console.error(`User not found: ${username}`)
+    }
     throw new HttpError(
       "User does not exist or password incorrect",
       "failed_to_authenticate",
