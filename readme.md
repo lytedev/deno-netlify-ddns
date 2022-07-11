@@ -18,39 +18,29 @@ mapped to the provided credentials.
 
 # Usage
 
+Primary usage is documented via `deno task` and depends on certain `pass`
+entries and access to certain `age` keys. For your usage, you will want to
+clone this repo and modify appropriately.
+
 **NOTE**: Running this locally while configured for production will delete and
 create DNS entries pointed to `127.0.0.1` or `::1`. You almost certainly do not
 want to do that.
 
-Start the server like so:
-
-    DEFAULT_NETLIFY_API_TOKEN='your_token_here' \
-        NETLIFY_DDNS_USERS_JSON='your_users_json' \
-        NETLIFY_DDNS_MAPPINGS_JSON='your_mappings_json' \
-        deno run --allow-env --allow-net ./main.ts
-
-Or in Deno Deploy:
-
-- Fork this repo on GitHub
-- Create a new project at https://dash.deno.com/new
-- Set the Deploy URL to the `main.ts` file in your fork
-- Go to Settings > Environment Variables and configure your environment variables
-
-If you're wanting to avoid GitHub, you're probably savvy enough to work that
-one out on your own!
-
 ## Configuration
 
-Your `NETLIFY_DDNS_USERS_JSON` should contain a JSON string with the following structure:
+Your `src/dist/users.json` should contain a JSON string with the following
+structure:
 
     {
       "username": "password",
       "daniel_flanagan_home": ["password_1", "password_2"]
     }
 
-**NOTE**: These passwords are not stored securely at all. Use globally unique passwords. You can generate some with `openssl rand -hex 32`.
+**NOTE**: These passwords are not stored securely at all. Use globally unique
+passwords. You can generate some with `openssl rand -hex 32`.
 
-And your `NETLIFY_DDNS_MAPPINGS_JSON` should contain a JSON string with the following structure:
+And your `src/dist/dns-entries.json` should contain a JSON string with the
+following structure:
 
     {
       "username": {
@@ -86,8 +76,12 @@ And your `NETLIFY_DDNS_MAPPINGS_JSON` should contain a JSON string with the foll
     }
 
 This would configure the server such that a request with HTTP Basic auth
-credentials like `daniel_flanagan_home:password_1` would setup A or AAAA DNS
-entries for the mapped subdomains using the address of the client.
+credentials like `daniel_flanagan_home:password_1` would setup `A` or `AAAA`
+DNS entries for the mapped subdomains using the address of the client.
+
+These files are best generated from `sops`-encrypted source files as
+demonstrated in this repository so that you can easily track your
+configuration.
 
 # Client Usage
 
@@ -97,15 +91,16 @@ setup credentials and this service will setup all mapped `A` (or `AAAA` if
 requested over IPv6) DNS records in Netlify and remove any conflicting `A` (or
 `AAAA`) records.
 
-    curl -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+    curl -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
 
-This means that if you want IPv4 (`A`) _and_ IPv6 (`AAAA`) records, you will need to hit the
-service over both IPv4 and IPv6:
+This means that if you want IPv4 (`A`) _and_ IPv6 (`AAAA`) records, you will
+need to hit the service over both IPv4 and IPv6:
 
-    curl -4 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
-    curl -6 -X POST -u daniel_flanagan_home:password_1 -L your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+    curl -4 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+    curl -6 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
 
-And if you want this in a systemd timer that's pretty simple to use, I've got a pre-configured client for you here:
+And if you want this in a systemd timer that's pretty simple to use, I've got
+a pre-configured client for you here:
 
 - https://github.com/lytedev/deno-netlify-ddns-client
 

@@ -1,13 +1,34 @@
 import { HttpError, jsonResponse, queryEnv } from "./common.ts";
+import { writeAll } from "https://deno.land/std@0.145.0/streams/conversion.ts";
 
 const DEFAULT_TTL = parseInt(await queryEnv("DEFAULT_NETLIFY_DDNS_TTL", "120"));
 const NETLIFY_API_ENDPOINT = "https://api.netlify.com/api/v1";
+
 const DEFAULT_NETLIFY_API_TOKEN = await queryEnv(
   "DEFAULT_NETLIFY_API_TOKEN",
-  "",
+  async (): Promise<string> => {
+    // pass netlify | grep token | awk -F': ' '{print $2}'
+    console.info(
+      "Attempting to retrieve DEFAULT_NETLIFY_API_TOKEN from `pass netlify`",
+    );
+    const p = Deno.run({ cmd: ["pass", "netlify"], stdout: "piped" });
+    const output = new TextDecoder().decode(await p.output());
+    for (const line of output.split("\n")) {
+      if (line.includes("token")) {
+        console.info(
+          "Loaded DEFAULT_NETLIFY_API_TOKEN from `pass netlify`",
+        );
+        return line.split(": ")[1];
+      }
+    }
+    console.warn(
+      "Failed to retrieve DEFAULT_NETLIFY_API_TOKEN from `pass netlify`",
+    );
+    return "";
+  },
 );
 
-if (DEFAULT_NETLIFY_API_TOKEN === "") {
+if (!DEFAULT_NETLIFY_API_TOKEN || DEFAULT_NETLIFY_API_TOKEN === "") {
   console.warn(
     "DEFAULT_NETLIFY_API_TOKEN is not set. All requests will need to specify their own token.",
   );
@@ -134,34 +155,63 @@ interface NetlifyDNSRecord {
   value: string;
 }
 
+const secretSopsCueJsonFile = async (
+  f: string,
+): Promise<string | undefined> => {
+  // sops --decrypt config/users.cue.encrypted \
+  //   | cue eval --out json --outfile config/dist/users.json --force -
+  if (!Deno.run) return undefined;
+  console.info(`Attempting to load sops-encrypted cue file "${f}" as json...`);
+  const sops = Deno.run({ cmd: ["sops", "--decrypt", f], stdout: "piped" });
+  const cueContent = await sops.output();
+  const cue = Deno.run({
+    cmd: ["cue", "eval", "--out", "json", "-"],
+    stdin: "piped",
+    stdout: "piped",
+  });
+  await writeAll(cue.stdin, cueContent);
+  cue.stdin.close();
+  return new TextDecoder().decode(await cue.output());
+};
+
 const netlifyDdnsUsers: { [username: string]: string[] | string } = JSON.parse(
   await queryEnv(
     "NETLIFY_DDNS_USERS_JSON",
-    JSON.stringify({
-      "tester-guy": "password",
-    }),
+    async () =>
+      await secretSopsCueJsonFile("./config/users.cue.encrypted") ||
+      await Deno.readTextFile("./src/dist/users.json") ||
+      JSON.stringify({
+        "tester-guy": "password",
+      }),
   ),
 );
+
+console.log("Users:", Object.keys(netlifyDdnsUsers));
 
 const netlifyDdnsMapping: { [username: string]: NetlifyDDNSMapping } = JSON
   .parse(
     await queryEnv(
       "NETLIFY_DDNS_MAPPINGS_JSON",
-      JSON.stringify({
-        "tester-guy": {
-          domains: {
-            "lyte.dev": {
-              subdomains: [
-                {
-                  name: "testing-netlify-ddns.testing-area.h",
-                },
-              ],
+      async () =>
+        await secretSopsCueJsonFile("./config/dns-entries.cue.encrypted") ||
+        await Deno.readTextFile("./src/dist/dns-entries.json") ||
+        JSON.stringify({
+          "tester-guy": {
+            domains: {
+              "lyte.dev": {
+                subdomains: [
+                  {
+                    name: "testing-netlify-ddns.testing-area.h",
+                  },
+                ],
+              },
             },
           },
-        },
-      }),
+        }),
     ),
   );
+
+console.log("DNS Entries:", netlifyDdnsMapping);
 
 const checkBasicAuth = (request: Request) => {
   const auth = request.headers.get("authorization");
@@ -213,10 +263,10 @@ const checkBasicAuth = (request: Request) => {
     : passwordOptions == password;
   if (!doesUserExist || !isPasswordValid) {
     if (!doesUserExist) {
-      console.error(`User not found: ${username}`)
+      console.error(`User not found: ${username}`);
     } else if (!isPasswordValid) {
-      console.error(`Invalid password for user: ${username}`)
-    } 
+      console.error(`Invalid password for user: ${username}`);
+    }
     throw new HttpError(
       "User does not exist or password incorrect",
       "failed_to_authenticate",

@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 
+dir="$(dirname "$0")"
+main="${dir}/main.ts"
+
 # start server
 export NETLIFY_DDNS_USERS_JSON='{"lytedev":"secure-password"}'
 export NETLIFY_DDNS_MAPPINGS_JSON='{"lytedev":{"domains":{"fake-test-domain.tk":{"subdomains":[{"name":"@"}]},"lyte.dev":{"subdomains":[{"name":"test.dragon.h"}]}}}}'
-DEFAULT_NETLIFY_API_TOKEN="$(pass netlify | grep token | awk -F': ' '{print $2}')"
-
-export DEFAULT_NETLIFY_API_TOKEN
 
 # do IPv6
-BIND_HOST='::1' BIND_PORT=8591 deno run --allow-net --allow-env ./main.ts &
+BIND_HOST='::1' BIND_PORT=8591 deno run --allow-net --allow-env "$main" &
 sleep 1
 
 curl -6 -X POST -u 'lytedev:secure-password' '[::1]:8591/v1/netlify-ddns/replace-all-relevant-user-dns-records'
@@ -17,7 +17,7 @@ kill %1
 sleep 1
 
 # do IPv4
-BIND_HOST='127.0.0.1' BIND_PORT=8591 deno run --allow-net --allow-env ./main.ts &
+BIND_HOST='127.0.0.1' BIND_PORT=8591 deno run --allow-net --allow-env "$main" &
 sleep 1
 
 curl -4 -X POST -u 'lytedev:secure-password' '127.0.0.1:8591/v1/netlify-ddns/replace-all-relevant-user-dns-records'
@@ -61,5 +61,11 @@ assert_has_record A "" fake-test-domain.tk 127.0.0.1
 assert_has_record AAAA "" fake-test-domain.tk ::1
 
 # cleanup
+
+if [ "$exit_code" == 0 ]; then
+  echo "Passed"
+else
+  echo "Failed"
+fi
 
 exit $exit_code

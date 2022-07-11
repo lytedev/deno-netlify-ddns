@@ -1,15 +1,22 @@
 export const queryEnv = async (
   envKey: string,
-  defaultValue: string,
+  defaultValue: string | (() => Promise<string>),
 ): Promise<string> => {
   if (Deno.permissions) {
     const { state } = await Deno.permissions.query({
       name: "env",
       variable: envKey,
     });
-    if (state !== "granted") return defaultValue;
+    if (state !== "granted") {
+      if (typeof defaultValue === "function") {
+        return await defaultValue();
+      } else {
+        return defaultValue;
+      }
+    }
   }
-  return Deno.env.get(envKey) || defaultValue;
+  return Deno.env.get(envKey) ||
+    (typeof defaultValue === "function" ? await defaultValue() : defaultValue);
 };
 
 export class EnvError extends Error {

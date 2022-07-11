@@ -1,0 +1,10 @@
+{
+	"tasks": {
+		"dev": "deno run -A src/main.ts",
+		"test": "./src/test.sh",
+		"dist:config:users": "mkdir -p src/dist && sops --decrypt config/users.cue.encrypted | cue eval --out json --outfile src/dist/users.json --force -",
+		"dist:config:dns-entries": "mkdir -p src/dist && sops --decrypt config/dns-entries.cue.encrypted | cue eval --out json --outfile src/dist/dns-entries.json --force -",
+		"dist:config": "deno task dist:config:users & deno task dist:config:dns-entries",
+		"deploy": "deno task dist:config && deployctl deploy --prod --project netlify-ddns --token $(pass deno-deploy-token | head -n 1) --include=src src/main.ts",
+	}
+}
