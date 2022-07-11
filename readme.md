@@ -78,7 +78,7 @@ following structure:
       },
       "example.org": {
         "subdomains": [
-          { "name": "another-subdomain"
+          { "name": "another-subdomain" }
         ]
       }
     }
