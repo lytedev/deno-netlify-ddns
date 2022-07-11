@@ -22,19 +22,43 @@ Primary usage is documented via `deno task` and depends on certain `pass`
 entries and access to certain `age` keys. For your usage, you will want to
 clone this repo and modify appropriately.
 
+## Running
+
+```bash
+deno task dev
+```
+
 **NOTE**: Running this locally while configured for production will delete and
 create DNS entries pointed to `127.0.0.1` or `::1`. You almost certainly do not
 want to do that.
+
+## Testing
+
+```bash
+deno task test
+```
+
+**NOTE**: Running this locally while configured for production will delete and
+create DNS entries pointed to `127.0.0.1` or `::1`. You almost certainly do not
+want to do that.
+
+## Deploying
+
+```bash
+deno task deploy
+```
 
 ## Configuration
 
 Your `src/dist/users.json` should contain a JSON string with the following
 structure:
 
-    {
-      "username": "password",
-      "daniel_flanagan_home": ["password_1", "password_2"]
-    }
+```json
+{
+  "username": "password",
+  "daniel_flanagan_home": ["password_1", "password_2"]
+}
+```
 
 **NOTE**: These passwords are not stored securely at all. Use globally unique
 passwords. You can generate some with `openssl rand -hex 32`.
@@ -42,38 +66,40 @@ passwords. You can generate some with `openssl rand -hex 32`.
 And your `src/dist/dns-entries.json` should contain a JSON string with the
 following structure:
 
-    {
-      "username": {
-        "domains": {
-          "example.com": {
-            "subdomains": [
-              { "name": "@" },
-              { "name": "subdomain" }
-            ]
-          },
-          "example.org": {
-            "subdomains": [
-              { "name": "another-subdomain"
-            ]
-          }
-        }
+```json
+{
+  "username": {
+    "domains": {
+      "example.com": {
+        "subdomains": [
+          { "name": "@" },
+          { "name": "subdomain" }
+        ]
       },
-      "daniel_flanagan_home": {
-        "domains": {
-          "example.com": {
-            "subdomains": [
-              { "name": "cat-pictures" },
-              { "name": "enterprise" }
-            ]
-          },
-          "lyte.dev": {
-            "subdomains": [
-              { "name": "home" }
-            ]
-          }
-        }
+      "example.org": {
+        "subdomains": [
+          { "name": "another-subdomain"
+        ]
       }
     }
+  },
+  "daniel_flanagan_home": {
+    "domains": {
+      "example.com": {
+        "subdomains": [
+          { "name": "cat-pictures" },
+          { "name": "enterprise" }
+        ]
+      },
+      "lyte.dev": {
+        "subdomains": [
+          { "name": "home" }
+        ]
+      }
+    }
+  }
+}
+```
 
 This would configure the server such that a request with HTTP Basic auth
 credentials like `daniel_flanagan_home:password_1` would setup `A` or `AAAA`
@@ -91,13 +117,17 @@ setup credentials and this service will setup all mapped `A` (or `AAAA` if
 requested over IPv6) DNS records in Netlify and remove any conflicting `A` (or
 `AAAA`) records.
 
-    curl -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+```bash
+curl -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+```
 
 This means that if you want IPv4 (`A`) _and_ IPv6 (`AAAA`) records, you will
 need to hit the service over both IPv4 and IPv6:
 
-    curl -4 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
-    curl -6 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+```bash
+curl -4 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+curl -6 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
+```
 
 And if you want this in a systemd timer that's pretty simple to use, I've got
 a pre-configured client for you here:
