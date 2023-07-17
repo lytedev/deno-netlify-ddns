@@ -35,7 +35,7 @@ want to do that.
 ## Testing
 
 ```bash
-deno task test
+deno task -A test
 ```
 
 **NOTE**: Running this locally while configured for production will delete and

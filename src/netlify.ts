@@ -55,6 +55,7 @@ interface AdditionalDNSRecord {
 
 interface Subdomain {
   name: string;
+  only?: DNSRecordType[];
   ttlSeconds?: number;
   additionalRecords?: AdditionalDNSRecord[];
 }
@@ -178,7 +179,7 @@ const netlifyDdnsUsers: { [username: string]: string[] | string } = JSON.parse(
   await queryEnv(
     "NETLIFY_DDNS_USERS_JSON",
     async () =>
-      await secretSopsCueJsonFile("./config/users.cue.encrypted") ||
+      await secretSopsCueJsonFile("./config/users.encrypted.cue") ||
       await Deno.readTextFile("./src/dist/users.json") ||
       JSON.stringify({
         "tester-guy": "password",
@@ -193,7 +194,7 @@ const netlifyDdnsMapping: { [username: string]: NetlifyDDNSMapping } = JSON
     await queryEnv(
       "NETLIFY_DDNS_MAPPINGS_JSON",
       async () =>
-        await secretSopsCueJsonFile("./config/dns-entries.cue.encrypted") ||
+        await secretSopsCueJsonFile("./config/dns-entries.encrypted.cue") ||
         await Deno.readTextFile("./src/dist/dns-entries.json") ||
         JSON.stringify({
           "tester-guy": {
@@ -337,14 +338,16 @@ export const handleDdnsRequest = async (
         // initialize to-add array
         // TODO: add additionalRecords!
         domainMappings.subdomains.forEach((subdomain) => {
-          recordsToAdd.push({
-            type: aType,
-            hostname: subdomain.name == "@"
-              ? domain
-              : `${subdomain.name}.${domain}`,
-            ttlSeconds: subdomain.ttlSeconds || DEFAULT_TTL,
-            value: remoteHost,
-          });
+          if (!subdomain.only || subdomain.only.includes(aType)) {
+            recordsToAdd.push({
+              type: aType,
+              hostname: subdomain.name == "@"
+                ? domain
+                : `${subdomain.name}.${domain}`,
+              ttlSeconds: subdomain.ttlSeconds || DEFAULT_TTL,
+              value: remoteHost,
+            });
+          }
         });
 
         console.log(

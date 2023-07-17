@@ -9,9 +9,17 @@ export const server = async (handler: Handler) => {
   console.log(`Listening on port ${(listener.addr as Deno.NetAddr).port}`);
 
   for await (const conn of listener) {
-    const httpConn = Deno.serveHttp(conn);
-    for await (const e of httpConn) {
-      e.respondWith(handler(e.request, conn));
+    try {
+      const httpConn = Deno.serveHttp(conn);
+      for await (const e of httpConn) {
+        try {
+          e.respondWith(handler(e.request, conn));
+        } catch (err) {
+          console.error("Failed to respond to request:", e, err);
+        }
+      }
+    } catch (e) {
+      console.error("Failed awaiting connection from listener:", e);
     }
   }
 };
