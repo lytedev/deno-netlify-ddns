@@ -427,12 +427,14 @@ export const handleDdnsRequest = async (
         }));
 
         console.log("Done!");
-        return {
+        const result = {
           domain,
           existed,
           deleted,
           added,
         };
+        console.debug(result)
+        return result
         // add any mapped entries that are missing
         // delete the "old" relevant ones
         // console.log(data);
