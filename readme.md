@@ -19,8 +19,8 @@ mapped to the provided credentials.
 # Usage
 
 Primary usage is documented via `deno task` and depends on certain `pass`
-entries and access to certain `age` keys. For your usage, you will want to
-clone this repo and modify appropriately.
+entries and access to certain `age` keys. For your usage, you will want to clone
+this repo and modify appropriately.
 
 ## Running
 
@@ -55,8 +55,8 @@ structure:
 
 ```json
 {
-  "username": "password",
-  "daniel_flanagan_home": ["password_1", "password_2"]
+	"username": "password",
+	"daniel_flanagan_home": ["password_1", "password_2"]
 }
 ```
 
@@ -68,46 +68,45 @@ following structure:
 
 ```json
 {
-  "username": {
-    "domains": {
-      "example.com": {
-        "subdomains": [
-          { "name": "@" },
-          { "name": "subdomain" }
-        ]
-      },
-      "example.org": {
-        "subdomains": [
-          { "name": "another-subdomain" }
-        ]
-      }
-    }
-  },
-  "daniel_flanagan_home": {
-    "domains": {
-      "example.com": {
-        "subdomains": [
-          { "name": "cat-pictures" },
-          { "name": "enterprise" }
-        ]
-      },
-      "lyte.dev": {
-        "subdomains": [
-          { "name": "home" }
-        ]
-      }
-    }
-  }
+	"username": {
+		"domains": {
+			"example.com": {
+				"subdomains": [
+					{ "name": "@" },
+					{ "name": "subdomain" }
+				]
+			},
+			"example.org": {
+				"subdomains": [
+					{ "name": "another-subdomain" }
+				]
+			}
+		}
+	},
+	"daniel_flanagan_home": {
+		"domains": {
+			"example.com": {
+				"subdomains": [
+					{ "name": "cat-pictures" },
+					{ "name": "enterprise" }
+				]
+			},
+			"lyte.dev": {
+				"subdomains": [
+					{ "name": "home" }
+				]
+			}
+		}
+	}
 }
 ```
 
 This would configure the server such that a request with HTTP Basic auth
-credentials like `daniel_flanagan_home:password_1` would setup `A` or `AAAA`
-DNS entries for the mapped subdomains using the address of the client.
+credentials like `daniel_flanagan_home:password_1` would setup `A` or `AAAA` DNS
+entries for the mapped subdomains using the address of the client.
 
 These files are best generated from `sops`-encrypted source files as
-demonstrated in this repository so that you can easily track your
-configuration.
+demonstrated in this repository so that you can easily track your configuration.
 
 # Client Usage
 
@@ -129,8 +128,8 @@ curl -4 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1
 curl -6 -X POST -u daniel_flanagan_home:password_1 https://your-ddns.deno.dev/v1/netlify-ddns/replace-all-relevant-user-dns-records
 ```
 
-And if you want this in a systemd timer that's pretty simple to use, I've got
-a pre-configured client for you here:
+And if you want this in a systemd timer that's pretty simple to use, I've got a
+pre-configured client for you here:
 
 - https://github.com/lytedev/deno-netlify-ddns-client
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 dir="$(dirname "$0")"
-main="${dir}/main.ts"
+main="${dir}/mod.ts"
 
 # start server
 export NETLIFY_DDNS_USERS_JSON='{
