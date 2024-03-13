@@ -13,8 +13,15 @@
       pkgs = import nixpkgs {inherit system;};
     in {
       deno-dev = pkgs.mkShell {
+        shellHook = ''
+          deno install -Arf https://deno.land/x/deploy/deployctl.ts
+          export PATH="$HOME/.deno/bin:$PATH"
+        '';
+
         buildInputs = with pkgs; [
           deno
+          cue
+          sops
           curl
           xh
           sqlite

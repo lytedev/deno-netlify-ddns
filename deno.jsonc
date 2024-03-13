@@ -1,17 +1,27 @@
 {
-	"tasks": {
-		"dev": "deno run -A src/mod.ts",
-		"test": "./src/test.sh",
-		"config:users": "sops config/users.encrypted.cue",
-		"config:dns-entries": "sops config/dns-entries.encrypted.cue",
-		"dist:config:users": "mkdir -p src/dist && sops --decrypt config/users.encrypted.cue | cue eval --out json --outfile src/dist/users.json --force -",
-		"dist:config:dns-entries": "mkdir -p src/dist && sops --decrypt config/dns-entries.encrypted.cue | cue eval --out json --outfile src/dist/dns-entries.json --force -",
-		"dist:config": "deno task dist:config:users & deno task dist:config:dns-entries",
-		"deploy": "deno task dist:config && deployctl deploy --prod --project netlify-ddns --token $(pass deno-deploy-token | head -n 1) --include=src src/mod.ts"
-	},
-	"fmt": {
-		"useTabs": true,
-		"semiColons": false,
-		"singleQuote": true
-	}
+  "tasks": {
+    "dev": "deno run -A src/mod.ts",
+    "test": "./src/test.sh",
+    "config:users": "sops config/users.encrypted.cue",
+    "config:dns-entries": "sops config/dns-entries.encrypted.cue",
+    "dist:config:users": "mkdir -p src/dist && sops --decrypt config/users.encrypted.cue | cue eval --out json --outfile src/dist/users.json --force -",
+    "dist:config:dns-entries": "mkdir -p src/dist && sops --decrypt config/dns-entries.encrypted.cue | cue eval --out json --outfile src/dist/dns-entries.json --force -",
+    "dist:config": "deno task dist:config:users & deno task dist:config:dns-entries",
+    "deploy": "deno task dist:config && deployctl deploy --prod --project netlify-ddns --token $(pass deno-deploy-token | head -n 1) --include=src src/mod.ts"
+  },
+  "fmt": {
+    "useTabs": true,
+    "semiColons": false,
+    "singleQuote": true
+  },
+  "deploy": {
+    "project": "9b53ecb2-a7a2-4b18-bcd6-2809b03e1980",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [
+      "src"
+    ],
+    "entrypoint": "src/mod.ts"
+  }
 }
