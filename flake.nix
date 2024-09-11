@@ -18,6 +18,8 @@
           export PATH="$HOME/.deno/bin:$PATH"
         '';
 
+        DENO_FUTURE = "1";
+
         buildInputs = with pkgs; [
           deno
           cue
