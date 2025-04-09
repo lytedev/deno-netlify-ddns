@@ -14,7 +14,7 @@
     in {
       deno-dev = pkgs.mkShell {
         shellHook = ''
-          command -v deployctl || deno install -Arf https://deno.land/x/deploy/deployctl.ts
+          command -v deployctl || deno install -gArf jsr:@deno/deployctl
           export PATH="$HOME/.deno/bin:$PATH"
         '';
 
